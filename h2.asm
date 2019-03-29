@@ -1,5 +1,5 @@
-
-# Zach Dummer assignment 02
+# This program prompts the user to enter an integer until a non-negative int is entered.
+# It then recursively calculates to nth number in the Fibonacci sequence when n is the non-negative number entered.
 .data
 prompt: .asciiz "Which Fibonacci number do you want? "
 output: .asciiz "The Fibonacci number is "
@@ -7,18 +7,19 @@ error: .asciiz "You must enter an integer greater than or equal to 0. Try again.
 .text
 main:
  la $a0, prompt
- li $v0, 4
- syscall
+ la $a1, error
  j readNonNegInt
  
 
-#readInt
+# prompts the user to enter and integer, then reads int that int
 readInt:
+ li $v0, 4
+ syscall
  li $v0, 5
  syscall
  jr $ra
  
-#readNonNegInt
+# calls read int the if the entered int is negative it calls the error, if not calls the Fibonacci method
 readNonNegInt:
  jal readInt
  bltz $v0, printError
@@ -27,15 +28,12 @@ readNonNegInt:
  jal fib
  j printAnswer
  
-#print error
+# Changes the address of the register to print to the error prompt
 printError:
- la $a0, error 
- li $v0, 4
- syscall
- move $a1, $ra
+ move $a0, $a1 # sets $a0 with the address of the error prompt so when readInt is called again it gives the error prompt
  j readInt
  
- #print answer
+ # prints the nth number of the fib sequence
 printAnswer:
 move $t0, $v0
  la $a0, output
@@ -48,7 +46,7 @@ move $t0, $v0
  
  #sub-routine for Fibonacci sequence
 fib:
- bgt $a0, 1, rec
+ bgt $a0, 1, rec # base case returns 0 or 1
  move $v0, $a0
  jr $ra
  
@@ -74,4 +72,3 @@ rec:
 end:
  li $v0, 10
  syscall
-
